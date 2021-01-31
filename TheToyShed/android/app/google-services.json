@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "932666676437",
+    "firebase_url": "https://the-toy-shed.firebaseio.com",
+    "project_id": "the-toy-shed",
+    "storage_bucket": "the-toy-shed.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:932666676437:android:1358b5dff2de6a9af47e5c",
+        "android_client_info": {
+          "package_name": "com.thetoyshed"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "932666676437-u64i4i5bfur8jsenkfo3qggjr7olbvt2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thetoyshed",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "932666676437-lh3e6t07d3pn3c9dpntb3huvsk73kmqq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDeXU8RxqZCpvwD7kCUVOLxEJW5A6AUC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "932666676437-lh3e6t07d3pn3c9dpntb3huvsk73kmqq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "932666676437-vorhlpbfjd7uq85aa93hjp29r1ks25nj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.thetoyshed.nsfire"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

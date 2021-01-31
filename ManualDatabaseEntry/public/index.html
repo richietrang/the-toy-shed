@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- update the version number as needed -->
+  <script defer src="/__/firebase/7.15.0/firebase-app.js"></script>
+  <!-- include only the Firebase features as you need -->
+  <script defer src="/__/firebase/7.15.0/firebase-auth.js"></script>
+  <script defer src="/__/firebase/7.15.0/firebase-database.js"></script>
+  <script defer src="/__/firebase/7.15.0/firebase-messaging.js"></script>
+  <script defer src="/__/firebase/7.15.0/firebase-storage.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/7.15.0/firebase-firestore.js"></script>
+  <!-- initialize the SDK after all desired features are loaded -->
+  <script defer src="/__/firebase/init.js"></script>
+  <script src="newFAQDocument.js"></script>
+  <script src="newToyDocument.js"></script>
+
+  <link href="./index.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+  <div id="message">
+    <h2>The Toy Shed</h2>
+    <h1>1. Add toy to database</h1>
+    <p id="toy-name-text"></p>
+    <p id="toy-youtube-video-id-text"></p>
+    <p id="short-description-text"></p>
+    <div id="toy-icon"></div>
+    <div id="gallery-primary-color"></div>
+    <div id="gallery-secondary-color"></div>
+
+    <div id="required-materials">required_materials</div>
+    <div id="required-tools">required_tools</div>
+    <a class="button" id="add-toy-button">Add Toy</a>
+
+    <h1>2. Add FAQs to the toy</h1>
+    <div>
+      toy_id: <span id="toy-id"></span>
+    </div>
+    <div id="faq-container"></div>
+    <a class="button" id="add-faqs-button">Add FAQs</a>
+  </div>
+
+  <p id="load">Firebase SDK Loading&hellip;</p>
+
+  <script>
+    // Show toy data before pressing submit
+    const toyDocument = newToyDocument();
+    document.getElementById("toy-name-text").innerText = `toy_name: ${toyDocument.toy_name}`;
+    document.getElementById("short-description-text").innerText = `short_description: ${toyDocument.short_description}`;
+    document.getElementById("toy-youtube-video-id-text").innerText = `youtube_video_id: ${toyDocument.youtube_video_id}`;
+    const toyIconContainer = document.getElementById("toy-icon");
+    toyIconContainer.innerText = `toy_icon: `;
+    const toyIcon = document.createElement("img");
+    toyIcon.src = toyDocument.toy_icon;
+    toyIconContainer.appendChild(toyIcon);
+
+    const primaryColorContainer = document.getElementById("gallery-primary-color");
+    primaryColorContainer.innerText = `gallery_ primary_color: ${toyDocument.gallery_primary_color}`;
+    const primaryColorBox = document.createElement("div");
+    primaryColorBox.style.backgroundColor = `${toyDocument.gallery_primary_color}`;
+    primaryColorBox.style.height = "30px";
+    primaryColorBox.style.width = "30px";
+    primaryColorContainer.appendChild(primaryColorBox);
+
+    const secondaryColorContainer = document.getElementById("gallery-secondary-color");
+    secondaryColorContainer.innerText = `gallery_ secondary_color: ${toyDocument.gallery_secondary_color}`;
+    const secondaryColorBox = document.createElement("div");
+    secondaryColorBox.style.backgroundColor = `${toyDocument.gallery_secondary_color}`;
+    secondaryColorBox.style.height = "30px";
+    secondaryColorBox.style.width = "30px";
+    secondaryColorContainer.appendChild(secondaryColorBox);
+
+    let requiredMaterialsContainer = document.getElementById("required-materials");
+
+    toyDocument.required_materials.forEach((material) => {
+      let materialName = document.createElement("p");
+      materialName.innerText = material.name;
+
+      let materialImage = document.createElement("img");
+      materialImage.src = material.image_url;
+      materialImage.style.width = "100%";
+
+      requiredMaterialsContainer.append(materialName);
+      requiredMaterialsContainer.append(materialImage);
+    });
+
+
+    let requiredToolsContainer = document.getElementById("required-tools");
+
+    toyDocument.required_tools.forEach((tool) => {
+      let toolName = document.createElement("p");
+      toolName.innerText = tool.name;
+
+      let toolImage = document.createElement("img");
+      toolImage.src = tool.image_url;
+      toolImage.style.width = "100%";
+
+      requiredToolsContainer.append(toolName);
+      requiredToolsContainer.append(toolImage);
+    });
+
+    // Show faq data before pressing submit
+    const faqContainer = document.getElementById('faq-container');
+    const FAQDocument = newFAQDocument();
+    FAQDocument.faqs.forEach(faq => {
+      const questionElement = document.createElement("p");
+      questionElement.innerText = `question: ${faq.question}`;
+
+      const answerElement = document.createElement("p");
+      answerElement.innerText = `answer: ${faq.answer.join(" - ")}`;
+
+      let FAQImage = document.createElement("img");
+      FAQImage.src = faq.picture_reference;
+      FAQImage.style.width = "100%";
+
+      faqContainer.appendChild(questionElement);
+      faqContainer.appendChild(answerElement);
+      faqContainer.appendChild(FAQImage);
+
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+      // // The Firebase SDK is initialized and available here!
+      //
+      // firebase.auth().onAuthStateChanged(user => { });
+      // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
+      // firebase.messaging().requestPermission().then(() => { });
+      // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
+      //
+      // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+      let toyId = "";
+      try {
+        let app = firebase.app();
+        let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
+        document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
+
+        const db = firebase.firestore();
+        document.getElementById("add-toy-button").addEventListener("click", () => {
+          db.collection("toys").add(
+            newToyDocument()
+          )
+            .then(function (docRef) {
+              toyId = docRef.id;
+              console.log("Document written with ID: ", toyId);
+              document.getElementById("toy-id").innerText = toyId.toString();
+            })
+            .catch(function (error) {
+              console.log("Error adding document: ", error);
+            });
+        });
+
+        document.getElementById("add-faqs-button").addEventListener("click", () => {
+
+          if (!toyId) {
+            throw Error("toyId is an empty string");
+          }
+          db.collection("faqs").add({
+            ...newFAQDocument(),
+            toy_reference_id: toyId,
+          })
+
+            .then(function (docRef) {
+              console.log("Document written with ID: ", docRef.id);
+            })
+            .catch(function (error) {
+              console.log("Error adding document: ", error);
+            });
+
+        });
+      } catch (e) {
+        console.error(e);
+        document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
+      }
+    });
+  </script>
+</body>
+
+</html>
